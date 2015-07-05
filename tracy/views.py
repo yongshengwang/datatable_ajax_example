@@ -20,4 +20,12 @@ def get_data(request):
     print end
     t = User.objects.all().order_by(order_dir+order)
     users = t[start:end]
-    return HttpResponse(json.dumps({"draw": int(request.GET['draw']),"recordsTotal": len(t),"recordsFiltered": len(t),'data':[{'name':u.name,'age':u.age} for u in users]}, cls=DjangoJSONEncoder))
+    return HttpResponse(json.dumps(
+        {"draw": int(request.GET['draw']),
+         "recordsTotal": len(t),
+         "recordsFiltered": len(t),
+         'data':[{'name': u.name, 'age': u.age, 'link':{'action': get_action(u.id), 'id': u.id}} for u in users]},
+        cls=DjangoJSONEncoder))
+
+def get_action(id):
+    return 'View' if id%2 ==0 else 'Edit'
